@@ -21,7 +21,7 @@ $ git clone --depth=1 https://github.com/Chang88ye/OptDesgin.git OptDesign
 Note: optdesign_setup will help you add all the NIHBA files to matlab directory. It will also test if you have all prerequisites available for OptDesign.
 
 3, Run a toy example that maximises succinate production from the E. coli core model
->> run_example
+>> run_OptDesign
 
 4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_example
 
@@ -29,4 +29,4 @@ License
 Released under the MIT license. All included network models provided under their respective licenses.
 
 Cite Us
-Jiang S, xx, Kaiser M, Krasnogor N.(2021) OptDesign: OptDesign:  Identifying optimal  design strategies in strain engineering for biochemical production. https://www.biorxiv.org/content/10.1101/752923v2.full
+Jiang S, Otero-Muras I, Banga JR,  Kaiser M, Krasnogor N.(2021) OptDesign: OptDesign:  Identifying optimal  design strategies in strain engineering for biochemical production. https://www.biorxiv.org/content/10.1101/752923v2.full
