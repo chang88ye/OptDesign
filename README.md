@@ -14,6 +14,7 @@ Gurobi8.0 above (or other software packages containing LP and ILP solvers)
 
 # Installation
 1, Download the whole OptDesgin package directly from this repository or clone using
+
 $ git clone --depth=1 https://github.com/Chang88ye/OptDesgin.git OptDesign
 
 2, Launch MATLAB and change the working directory to NIHBA as the current folder. Then run optdesign_setup
