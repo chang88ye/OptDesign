@@ -30,4 +30,4 @@ License
 Released under the MIT license. All included network models provided under their respective licenses.
 
 Cite Us
-Jiang S, xx, Kaiser M, Krasnogor N.(2021) OptDesign: OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. 
+Jiang S, Otero-Muras I, Banga JR, Kaiser M, and Krasnogor N.(2021) OptDesign: OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. 
