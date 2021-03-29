@@ -1,6 +1,6 @@
 # OptDesign
 
-OptDesgin (Optimal Network Design) is a software platform for identifying genetic modification strategies, including knockout and up/down-regulation, for metabolic engineering design. It is based on genome-scale metabolic models (GSMM), and considers a two-step
+OptDesign (Optimal Network Design) is a software platform for identifying genetic modification strategies, including knockout and up/down-regulation, for metabolic engineering design. It is based on genome-scale metabolic models (GSMM), and considers a two-step
 procedure to identify the optimal combination of manipulations. The first step essentially reduces the search space by finding the most probable regulation targets. The second step considers the cell and a metabolic engineer as two different agenets playing a metabolic game: 
 the metabolic engineer attempts to maximally violate the host cell's intention in avoiding overproducing biochemicals for homeostasis. 
 
@@ -29,8 +29,8 @@ For the core model, this produces two flux distribution maps, one for the wild t
 
 4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_OptDesign.
 
-License
+# License
 Released under the MIT license. All included network models provided under their respective licenses.
 
-Cite Us
+# Cite Us
 Jiang S, Otero-Muras I, Banga JR, Kaiser M, and Krasnogor N.(2021) OptDesign: OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. 
