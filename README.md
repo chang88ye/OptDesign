@@ -15,7 +15,7 @@ Gurobi8.0 above (or other software packages containing LP and ILP solvers)
 # Installation
 1, Download the whole OptDesgin package directly from this repository or clone using
 
-$ git clone --depth=1 https://github.com/Chang88ye/OptDesgin.git OptDesign
+$ git clone --depth=1 https://github.com/Chang88ye/OptDesign.git OptDesign
 
 2, Launch MATLAB and change the working directory to NIHBA as the current folder. Then run optdesign_setup
 >> optdesign_setup
@@ -33,4 +33,4 @@ For the core model, this produces two flux distribution maps, one for the wild t
 Released under the MIT license. All included network models provided under their respective licenses.
 
 # Cite Us
-Jiang S, Otero-Muras I, Banga JR, Kaiser M, and Krasnogor N.(2021) OptDesign: OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. 
+Jiang S, Otero-Muras I, Banga JR, Kaiser M, and Krasnogor N (2021) OptDesign: OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. 
