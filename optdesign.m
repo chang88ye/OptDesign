@@ -61,7 +61,7 @@ else
     if ~isfield(options,'minGrowth'), options.minGrowth=0; end
     if ~isfield(options,'minProdRatio'), options.minProdRatio=0.5; end
     if ~isfield(options,'regBlackList'), options.regBlackList={}; end
-    if ~isfield(options,'changeThrsh'), options.changeThresh={'ratio',0.01};end
+    if ~isfield(options,'changeThresh'), options.changeThresh={'ratio',0.01};end
 
     % import options for MILP solvers
     if ~isfield(options,'timeLimit'), options.timeLimit=252000; end
