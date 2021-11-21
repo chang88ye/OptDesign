@@ -205,7 +205,7 @@ p_ub = [ ubA;
 vartype = char(['C' * ones(nRxns, 1);
     'C' * ones(nRxns, 1);
     'B' * ones(2*nRxns, 1); ]);
-osense = -1; %minimize
+osense = 1; %minimize
 
 [bilevelMILPProblem.c, bilevelMILPProblem.A,...
     bilevelMILPProblem.b, bilevelMILPProblem.lb,...
