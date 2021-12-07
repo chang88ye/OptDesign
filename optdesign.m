@@ -18,13 +18,20 @@ function [solution] = optdesign(model, options, display)
 %                              *  `maxM' - Maximum number of manipulations (default: 10)
 %                              *  `maxKO` - Maximum number of knockouts (default: 5)
 %                              *  `selectedRxns` - List of reactions that can be knocked out
-%                              *  `regBlackList` - List of reactions that cannot be regulated (default: {})
 %                              *  `targetRxn' - Target production reaction 
 %                              *  `minProdRatio` - Minimum ratio of production to theoretical maxmimum value (default: 0.5)
 %                              *  `minGrowth` - Minimum growth rate (default: 0.1)
 %                              *  'changeThresold' - minimum noticeable flux change, which can be either absolute flux ({'flux',1}) 
 %                                  or flux ratio ({'ratio',0.1}).   (default: {'flux',1})
 %                              *  `timeLimit` - Maximum run time in seconds (default: 252000)
+%                              *  `regBlackList` - (structure) Reactions to be excluded (default: struct('rxnList', {{}}, 'typeReg', ''))
+%                                  This structure has the following fields:
+%                                            .rxnList - Reaction list (cell array)
+%                                            .typeReg - set from which reaction is excluded (char array) (U: Set of upregulared reactions, D: set of
+%                                                       downregulared reations, K: set of knockout reactions)
+%                                   E.g.: `regBlackList = struct('rxnList', {{'A', 'B'}}, 'typeReg', 'UD')`
+%                                  In this E.g. raxn 'A' is prevented to appear in the set of upregulated reactions and 'B' is
+%                                  prevented to appear in the downregulated set of reactions.
 %
 % OutputFlag:                display intermediate results and solver progress
 
@@ -239,10 +246,24 @@ y_up=y(1:nRxns);
 y_down=y(nRxns+1:2*nRxns);
 
 % Set upper bound for regulation variables in black list
-if isfield(options,'regBlackList')
-    regBlackList=contains(model.rxns,options.regBlackList);
-    y_up(regBlackList)=0;
-    y_down(regBlackList)=0;
+if (isfield(options,'regBlackList') && isstruct(options.regBlackList) && isfield(options.regBlackList, 'rxnList') && isfield(options.regBlackList, 'typeReg') ...
+        && length(options.regBlackList.rxnList) == length(options.regBlackList.typeReg))
+    
+    excludedURxns = {};
+    excludedDRxns = {};
+    if ~isempty(options.regBlackList.rxnList)
+        for i = 1:length(options.regBlackList.rxnList)
+            if strcmpi(options.regBlackList.typeReg(i), 'U')
+                excludedURxns = union(excludedURxns, options.regBlackList.rxnList(i));
+            elseif strcmpi(options.regBlackList.typeReg(i), 'D')
+                excludedDRxns = union(excludedDRxns, options.regBlackList.rxnList(i));
+            end
+        end
+    end
+    regBlackListU=contains(model.rxns,excludedURxns);
+    y_up(regBlackListU)=0;
+    regBlackListD=contains(model.rxns,excludedDRxns);
+    y_down(regBlackListD)=0;
 end
 
 upCandidateRxns=model.rxns(y_up);
