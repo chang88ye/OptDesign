@@ -1,3 +1,5 @@
+![OptDesign](https://myoctocat.com/assets/images/base-octocat.svg)
+
 # OptDesign
 
 OptDesign (Optimal Network Design) is a software platform for identifying genetic modification strategies, including knockout and up/down-regulation, for metabolic engineering design. It is based on genome-scale metabolic models (GSMM), and considers a two-step
