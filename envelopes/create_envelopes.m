@@ -79,21 +79,7 @@ end
 regList={{},''}; % wild type
 
 % regList ={{'PGI','PTAr/ACKr','GND','ATPS4rpp', 'SUCDi', 'HEX1','MALS','PPC'}, 'kkkkkuuu'}; % succ
-% regList ={{'TALA','ALLTN/ALLTAMH2/UGCIAMH','DHAPT','PFK', 'SUCDi', 'FRD3','MALS','PGM'},'kkkkkuud'}; % succ-ref
 
-% regList = {{'CPPPGO','OHPBAT/PERD/E4PD','ALCD19','TKT2','AI2K/PAI2I/PAI2T','EX_pi_e/PItex','TPI'}, 'kkkkkdu'}; % lyco
-% regList = {{'CPPPGO';'ALCD19';'AI2K/PAI2I/PAI2T';'EX_pi_e/PItex';'TPI'}, 'kkkdu'}; % lyco-ref
-% regList ={{'ALCD19';'AI2K/PAI2I/PAI2T';'EX_pi_e/PItex';'TPI'}, 'kkdu'};
-regList={{'ALCD19';'FDH4pp';'AI2K/PAI2I/PAI2T'; 'DXPRIi/CDPMEK/MEPCT/MECDPS/MECDPDH5';'EX_pi_e/PItex';'TPI'}, 'kkkudu'};
-
-% regList ={{'IMPD';'TRPAS2';'ASNS2';'ATPS4rpp';'AI2K/PAI2I/PAI2T';'EX_pi_e/PItex';'H2Otpp';'POR5';'FUM';'RPE'}, 'kkkkkddudd'}; % narg
-% regList ={{'EDA/EDD';'GHMT2r';'ATPS4rpp';'GLUDy';'CYTBO3_4pp'; 'EX_pi_e/PItex';'AKGDH';'PGCD';'PPA';'TKT1'}, 'kkkkkddddd'};% narg-ref
-% regList ={{'PPM';'ASNS2';'CBMKr';'ATPS4rpp';'AI2K/PAI2I/PAI2T';'EX_pi_e/PItex';'RPI'; 'ENO'}, 'kkkkkddd'}; 
-%  regList ={{'IMPD';'TRPAS2';'ASNS2';'ATPS4rpp';'AI2K/PAI2I/PAI2T';'EX_pi_e/PItex';'H2Otpp';'PGI';'SUCDi'}, 'kkkkkddud'};
-
-
-% regList ={{'ALCD19','TKT2','AI2K','PItex', 'TPI'}, 'kkkdu'};
-% regList ={{'R1PK','FUM', 'ADK3', 'PItex', 'ADK1'}, 'kkddd'};
 
 [minGrowthRate, delta] =deal(0.1, 1);
 
