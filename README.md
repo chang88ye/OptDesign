@@ -2,8 +2,8 @@
 ![OptDesign](https://github.com/chang88ye/OptDesign/blob/main/ToC.png)
 
 <p float="left">
-  <img src="https://myoctocat.com/assets/images/base-octocat.svg" width="100" />
-  <img src="https://github.com/chang88ye/OptDesign/blob/main/ToC.png" width="100" /> 
+  <img src="https://myoctocat.com/assets/images/base-octocat.svg" width="50%" />
+  <img src="https://github.com/chang88ye/OptDesign/blob/main/ToC.png" width="50%" /> 
 </p>
 
 # OptDesign
