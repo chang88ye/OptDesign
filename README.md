@@ -1,7 +1,7 @@
-![OptDesign](https://myoctocat.com/assets/images/base-octocat.svg)
-![OptDesign](https://github.com/chang88ye/OptDesign/blob/main/ToC.png)
+<!-- ![OptDesign](https://myoctocat.com/assets/images/base-octocat.svg)
+![OptDesign](https://github.com/chang88ye/OptDesign/blob/main/ToC.png) -->
 
-<p float="left">
+<p float="centre">
   <img src="https://myoctocat.com/assets/images/base-octocat.svg" width="20%" />
   <img src="https://github.com/chang88ye/OptDesign/blob/main/ToC.png" width="75%" /> 
 </p>
