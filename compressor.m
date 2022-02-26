@@ -187,6 +187,10 @@ end
 combineRest = 1;
 rxnSets = modelRem.rxns;
 preservedRxnIDs = findRxnIDs(modelRem,{options.targetRxn,options.biomassRxn,options.substrateRxn});
+if ismember(0, preservedRxnIDs)
+    disp('Warning: some preserved reactions do not exist in the reduced model.')
+end
+preservedRxnIDs=setdiff(preservedRxnIDs,0); % remove unfound rxns.
 preservedIDs = find(all(modelRem.S(:,preservedRxnIDs)==0,2));
 while combineRest == 1
     combineRest = 0;
@@ -276,7 +280,13 @@ while combineRest == 1
             modelRem.rules(metAssocRxnIDs(2),1)={''};
             
             %Change Subsystems
-            modelRem.subSystems{metAssocRxnIDs(1)}=[modelRem.subSystems{metAssocRxnIDs(1)}, '/' ,modelRem.subSystems{metAssocRxnIDs(2)}];
+            if isempty(modelRem.subSystems{metAssocRxnIDs(1)})
+                modelRem.subSystems{metAssocRxnIDs(1)}=modelRem.subSystems{metAssocRxnIDs(2)};
+            elseif ~isempty(modelRem.subSystems{metAssocRxnIDs(2)})
+                modelRem.subSystems{metAssocRxnIDs(1)}=[modelRem.subSystems{metAssocRxnIDs(1)}, '/' ,modelRem.subSystems{metAssocRxnIDs(2)}];
+            end
+                
+            %modelRem.subSystems{metAssocRxnIDs(1)}=[modelRem.subSystems{metAssocRxnIDs(1)}, '/' ,modelRem.subSystems{metAssocRxnIDs(2)}];
             %subSel2=ismember(modelRem.subSystems{metAssocRxnIDs(2)},options.selSubSystems);
             %if (~subSel2)
              %   modelRem.subSystems{metAssocRxnIDs(1)}=modelRem.subSystems{metAssocRxnIDs(2)};

@@ -11,6 +11,8 @@ options.biomassRxn=biomassRxn;
 options.targetRxn=targetRxn;
 options.loadRedModel=true;
 
+model.description=[model.description, '-',targetRxn];
+
 [redModel,candidate]=selectCandidates(model,options);
 redModel.substrateRxns=findSubstrateInReducedModel(model,substrateRxn);
 end
@@ -96,7 +98,9 @@ deleteRxns=union(zeroFluxRxns,mustFluxRxns);
 selectedRxns=setdiff(selectedRxns,deleteRxns);
 
 %% Change target rxn bounds
-reducedModel=changeRxnBounds(reducedModel,{options.biomassRxn,options.targetRxn},[0 0],{'l','l'});
+iscontains=cellfun(@(c)contains(c,options.targetRxn),reducedModel.rxns);
+newTargetRxn=reducedModel.rxns{iscontains};
+reducedModel=changeRxnBounds(reducedModel,{options.biomassRxn,newTargetRxn},[0 0],{'l','l'});
 
 
 %% get genes from reactions
@@ -127,7 +131,8 @@ specialRxns=...
     'FLNDPR2r','FLDR2','FLDR','PFOR'};
 
 % Remove some reactions from allowable knockouts
-switch model.description
+modelnames=strsplit(model.description,'-');
+switch modelnames{1}
     case {'Ecoli_core_model','e_coli_core','iAF1260','iAF1260b', 'iJO1366', 'iML1515'}
         preserveRxns=...
             {'ENO','GAPD','PGK','PGM',...       % Essential reactions in actual cell.

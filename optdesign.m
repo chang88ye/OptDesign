@@ -87,6 +87,7 @@ if isfield(options,'selectedRxns')
     selSelectedRxns = logical(ismember(model.rxns,options.selectedRxns));
 end
 
+
 %% Generate selection reaction matrix
 model.selRxnMatrix = selMatrix(selSelectedRxns)';
 possibleKOList = model.rxns(selSelectedRxns);
@@ -115,8 +116,17 @@ reg_down=reg_up;
 lb=model.lb;
 ub=model.ub;
 
-lbA=lb;
-ubA=ub;
+% Generate a reference vector using pFBA: This is optional
+%pFBAsol=optimizeCbModel(model,'max',1e-5);
+pFBAsol=optimizeCbModel(model,'max','one');
+lbA=pFBAsol.x-1e-6;
+ubA=pFBAsol.x+1e-6;
+
+% % set flux bounds for wild type
+% lbA=lb;
+% ubA=ub;
+
+% set flux change range
 ubB=ub-lb;
 lbB=-ubB;
 
@@ -224,7 +234,24 @@ osense = 1; %minimize
 solOpt.OutputFlag=1;
 solOpt.timeLimit=200;
 %solOpt.MIPGap=0.05;
-sol= solveCobraMILP(bilevelMILPProblem,solOpt);
+
+
+% # In some cases it occurs that Gurobi reports an infeasible model
+% # probably due to numerical difficulties (c.f. https://github.com/eth-sri/eran/issues/74).
+% # These can be resolved (in the cases considered) by increasing the Cutoff parameter.
+% # The code below tries to recover from an infeasible model by increasing the default cutoff
+% # a few times.
+if osense == -1 %maxmisation
+   for cutoff=[1,10, 20] 
+       solOpt.Cutoff=cutoff;
+       sol= solveCobraMILP(bilevelMILPProblem,solOpt);
+       if sol.stat==1 % optimal solution found
+           break;
+       end
+   end
+else
+    sol= solveCobraMILP(bilevelMILPProblem,solOpt);
+end
 
 if isempty(sol.full)
     error('no feasible solution can be found.')
@@ -335,7 +362,7 @@ B=[
     sparse(1,2*nRxns+2*nMets+6*nRxns+nInt_u+nInt_d+nInt_x)         ones(1, nInt_u+nInt_d+nInt_x);
     
     % target production constraint
-    -1*selTargetRxns' -1*selTargetRxns'  sparse(1,2*nMets+6*nRxns+2*(nInt_u+nInt_d+nInt_x));
+%     -1*selTargetRxns' -1*selTargetRxns'  sparse(1,2*nMets+6*nRxns+2*(nInt_u+nInt_d+nInt_x));
 ];
 
 b = [ zeros(nMets, 1);
@@ -359,7 +386,7 @@ b = [ zeros(nMets, 1);
     options.maxKO;
     options.maxM;
     
-    -0.1;
+%     -0.1;
     ];
 csense = char(['=' * ones(nMets, 1);
     '=' * ones(nMets, 1);
@@ -382,7 +409,7 @@ csense = char(['=' * ones(nMets, 1);
     '<';
     '<';
     
-    '<';
+%     '<';
     ]);
 p_lb = [ lbA;  
     lbB;
@@ -419,10 +446,12 @@ osense = 1; %minimize
     deal(c, B, b, p_lb, p_ub, csense, vartype, osense, options.x0);
 
 solverOpt.OutputFlag=1;
-%solverOpt.MIPFocus=3;
+solverOpt.MIPFocus=1;
+% solverOpt.Presolve=2;
 solverOpt.Heuristics=1;
 solverOpt.PoolSolutions=10;
 solverOpt.PoolSearchMode=2;
+solverOpt.Cutoff=-0.00; %only interested in solution with production > 0.1
 sol= solveCobraMILP(bilevelMILPProblem,solverOpt);
 
 clear selUpMatrix selDnMatrix selKOMatrix bilevelMILPProblem solverOpt 
@@ -459,6 +488,10 @@ for i=1:length(sol.pool)
     
     up=abs(v(regUpDn)+u(regUpDn))>abs(v(regUpDn)); % absolute flux in mutant is larger than in wild type
     dn=abs(v(regUpDn)+u(regUpDn))<abs(v(regUpDn));
+    
+    signs = u(regUpDn)>0;
+    regUpDnRxns(signs)=cellfun(@(rxn)[rxn,'(+)'], regUpDnRxns(signs), 'UniformOutput', false);
+    regUpDnRxns(~signs)=cellfun(@(rxn)[rxn,'(-)'], regUpDnRxns(~signs), 'UniformOutput', false);
     
     solution.pool(i).UPset=regUpDnRxns(up);
     solution.pool(i).DOWNset=regUpDnRxns(dn);
