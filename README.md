@@ -45,10 +45,10 @@ The solution structure of OptDesign is:
 
 4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_OptDesign. 
 
-5, This is an optional step, however, you need to run creat_envelopes.m in the envelopes foler if you want to create production envelopes for the design strategies identified by OptDesign
+5, This is an optional step, however, you need to run creat_envelopes.m in the envelopes foler if you want to create production envelopes for the design strategies identified by OptDesign.
 
 # License
 Released under the MIT license. All included network models provided under their respective licenses.
 
 # Cite Us
-Jiang S, Otero-Muras I, Banga JR, Kaiser M, and Krasnogor N (2021) OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. 
+Jiang S, Otero-Muras I, Banga JR, Kaiser M, and Krasnogor N (2021) OptDesign: Identifying optimal  design strategies in strain engineering for biochemical production. doi: https://doi.org/10.1101/2021.12.10.472123
