@@ -30,8 +30,11 @@ Note: optdesign_setup will help you add all the NIHBA files to matlab directory.
 For the core model, this produces two flux distribution maps, one for the wild type and one for the mutant strain. You should be able to use the maps to inspect flux changes.
 
 The solution structure of OptDesign is:
+
     - KOSet: set of knockcout reactions.
+    
     - UPset: set of upregulation reactions whose absolute flux increases. Relative flux change direction is indicated by '+' (flux increase) or '-' (flux decrease) right after a reaction name in the set.
+    
     - DOWNset: set of downregulation reactions whose absolute flux decreases. Relative flux change direction is indicated by '+' (flux increase) or '-' (flux decrease) right after a reaction name in the set.
 
 4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_OptDesign. 
