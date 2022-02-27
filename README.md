@@ -16,7 +16,7 @@ the metabolic engineer attempts to maximally violate the host cell's intention i
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 Prerequisites
-MATLAB2016b and later
+MATLAB2018b and later
 cobratoolbox (latest version: 3.0)
 Gurobi8.0 above (or other software packages containing LP and ILP solvers)
 
@@ -25,10 +25,10 @@ Gurobi8.0 above (or other software packages containing LP and ILP solvers)
 
 $ git clone --depth=1 https://github.com/Chang88ye/OptDesign.git OptDesign
 
-2, Launch MATLAB and change the working directory to NIHBA as the current folder. Then run optdesign_setup
+2, Launch MATLAB and change the working directory to OptDesign as the current folder. Then run optdesign_setup
 >> optdesign_setup
 
-Note: optdesign_setup will help you add all the NIHBA files to matlab directory. It will also test if you have all prerequisites available for OptDesign.
+Note: optdesign_setup will help you add all the OptDesign files to matlab directory. It will also test if you have all prerequisites available for OptDesign.
 
 3, Run a toy example that maximises succinate production from the E. coli core model
 >> run_OptDesign
