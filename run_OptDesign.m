@@ -80,16 +80,16 @@ disp(['Preprocessing step completed, ', num2str(length(selectedRxns)),' candidat
 
 %% -----------Set up algorithm--------------
 % set options for OptDesign algorithm
-regBlackList={substrate,'ATPM',biomassRxn, newTargetRxn, 'SUCCtex','SUCCt1pp'};
-options.regBlackList=struct('rxnList', {[regBlackList,regBlackList]}, 'typeReg','UUUUUUDDDDDD'); %'EX_h2o','EX_o2','EX_h_e','SUCCtex','SUCCt1pp','GLCt2pp'};
+regBlackList={substrate,'ATPM',biomassRxn, newTargetRxn, 'SUCCtex','SUCCt1pp','GRTT', 'crtE' 'EX_h2o','EX_o2','EX_h_e'};
+options.regBlackList=struct('rxnList', {[regBlackList, regBlackList]}, 'typeReg','UUUUUUUUUUUDDDDDDDDDDD'); %'EX_h2o','EX_o2','EX_h_e','SUCCtex','SUCCt1pp','GLCt2pp'};
 options.selectedRxns=selectedRxns(~contains(selectedRxns,'EX_')); % exclude transport reactions
 options.targetRxn=newTargetRxn;
 options.minGrowth=0.1; % minimal growth in production mutants
-options.minProductRatio=1; % anticipated ratio of production
+options.minProductRatio=0.99; % anticipated ratio of production
 options.maxKO=5; % at most the number of knockouts
 options.maxM=10; % maximal number of manipulations
 options.changeThresh={'flux',1}; % noticeable flux change threshold
-options.timeLimit=10000;   % a couple of mins
+options.timeLimit=3000;   % a couple of mins
 
 
 %% ----------- Run algorithm and save results--------------
