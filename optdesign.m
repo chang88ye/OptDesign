@@ -75,6 +75,7 @@ else
     if ~isfield(options,'Heuristics'), options.Heuristics = 1.0; end
     if ~isfield(options,'MIPFocus'), options.MIPFocus = 1; end
     if ~isfield(options,'ImproveStartGap'), options.ImproveStartGap = Inf; end
+    if ~isfield(options,'RefFluxVector'), RefFluxVector=1; else RefFluxVector=0; end
 end
 
 % solver options
@@ -116,15 +117,21 @@ reg_down=reg_up;
 lb=model.lb;
 ub=model.ub;
 
-% Generate a reference vector using pFBA: This is optional
-%pFBAsol=optimizeCbModel(model,'max',1e-5);
-pFBAsol=optimizeCbModel(model,'max','one');
-lbA=pFBAsol.x-1e-6;
-ubA=pFBAsol.x+1e-6;
-
-% % set flux bounds for wild type
-% lbA=lb;
-% ubA=ub;
+if RefFluxVector
+    % Generate a reference vector using pFBA: This is optional
+    try %minimise squared internal fluxes
+        pFBAsol=optimizeCbModel(model,'max',1e-5);
+    catch % minimise absolute sum of fluxes 
+        pFBAsol=optimizeCbModel(model,'max','one');
+    end
+    lbA=pFBAsol.x-1e-6;
+    ubA=pFBAsol.x+1e-6;
+else
+    
+    % set flux bounds for wild type
+    lbA=lb;
+    ubA=ub;
+end
 
 % set flux change range
 ubB=ub-lb;
@@ -451,7 +458,7 @@ solverOpt.MIPFocus=1;
 solverOpt.Heuristics=1;
 solverOpt.PoolSolutions=10;
 solverOpt.PoolSearchMode=2;
-solverOpt.Cutoff=-0.00; %only interested in solution with production > 0.1
+solverOpt.Cutoff=-0.00; %only interested in solution with production > a threshold (-0.1)
 sol= solveCobraMILP(bilevelMILPProblem,solverOpt);
 
 clear selUpMatrix selDnMatrix selKOMatrix bilevelMILPProblem solverOpt 
