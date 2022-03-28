@@ -19,6 +19,7 @@ Prerequisites
   - MATLAB2018b and later
   - cobratoolbox (latest version: 3.0)
   - Gurobi8.0 above (or other software packages containing LP and ILP solvers)
+  
 Note: you need to use the new solveCobraMILP.m to replace the one in cobratoolbox if your solver is gurobi.
 
 # Installation
