@@ -16,9 +16,10 @@ the metabolic engineer attempts to maximally violate the host cell's intention i
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 
 Prerequisites
-MATLAB2018b and later
-cobratoolbox (latest version: 3.0)
-Gurobi8.0 above (or other software packages containing LP and ILP solvers)
+  - MATLAB2018b and later
+  - cobratoolbox (latest version: 3.0)
+  - Gurobi8.0 above (or other software packages containing LP and ILP solvers)
+Note: you need to use the new solveCobraMILP.m to replace the one in cobratoolbox if your solver is gurobi.
 
 # Installation
 1, Download the whole OptDesgin package directly from this repository or clone using
