@@ -22,7 +22,7 @@ end
 function [reducedModel,candidate]=selectCandidates(model,options)
 tol=1e-4;
 
-if ~exist('reduced', 'dir')
+if not(isfolder('reduced'))
        mkdir('reduced');
 end
 %% step0: compress model,including removing zeroflux rxns and lumping rxns
