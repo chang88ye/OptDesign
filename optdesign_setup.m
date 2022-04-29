@@ -17,7 +17,7 @@ end
 % make sure the current folder is OptDesign
 str = which('optdesign.m');
 if isempty(str)
-    error('Current directory is not NIHBA, please change it to OptDesign.\n')
+    error('Current directory is not OptDesign, please change it to OptDesign.\n')
 end
 
 warning off
