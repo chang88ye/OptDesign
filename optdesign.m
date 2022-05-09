@@ -75,7 +75,7 @@ else
     if ~isfield(options,'Heuristics'), options.Heuristics = 1.0; end
     if ~isfield(options,'MIPFocus'), options.MIPFocus = 1; end
     if ~isfield(options,'ImproveStartGap'), options.ImproveStartGap = Inf; end
-    if ~isfield(options,'RefFluxVector'), RefFluxVector=1; else RefFluxVector=0; end
+    if ~isfield(options,'RefFluxVector'), RefFluxVector=0; else RefFluxVector=1; end
 end
 
 % solver options
