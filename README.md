@@ -47,7 +47,7 @@ The solution structure of OptDesign is:
 
 4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_OptDesign. 
 
-5, This is an optional step, however, you need to run creat_envelopes.m in the envelopes folder if you want to create production envelopes for the design strategies identified by OptDesign.
+5, This is an optional step, however, you need to run creat_envelopes.m in the envelopes folder if you want to create production envelopes for the design strategies identified by OptDesign. It may run into errors with regard to generating LPs inconsistent with Cobratoolbox. If this is the case, you can simply turn off the model verification which induces the issue.
 
 # License
 Released under the MIT license. All included network models provided under their respective licenses.
