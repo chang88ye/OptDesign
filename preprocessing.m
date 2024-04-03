@@ -1,9 +1,16 @@
-function [redModel,candidate]=preprocessing(model,substrateRxn,oxygenRxn,biomassRxn,targetRxn)
+function [redModel,regList,koList]=preprocessing(model,substrateRxn,oxygenRxn,biomassRxn,targetRxn)
 
 % collect a priori knowledge about undoable/essential genes/reactions/subsystems.
 options=blackList(model);
-gene_essential_data=readtable('ecoli_essential_genes.csv');
-options.expEssentialGenes=gene_essential_data{:,2};
+
+try
+    gene_essential_data=readtable('ecoli_essential_genes.csv');
+    options.expEssentialGenes=gene_essential_data{:,2};
+
+    fprintf('experimentally verified E coli essential genes were provided in the file ecoli_essential_genes.csv\n');
+catch
+    error('experimentally verified E coli essential genes were either not provided in the file ecoli_essential_genes.csv or given in inconsistent formats.');
+end
 
 options.substrateRxn=substrateRxn;
 options.oxygenRxn=oxygenRxn;
@@ -13,13 +20,13 @@ options.loadRedModel=true;
 
 model.description=[model.description, '-',targetRxn];
 
-[redModel,candidate]=selectCandidates(model,options);
+[redModel,regList,koList]=selectCandidates(model,options);
 redModel.substrateRxns=findSubstrateInReducedModel(model,substrateRxn);
 end
 
 
 %% subfunctions
-function [reducedModel,candidate]=selectCandidates(model,options)
+function [reducedModel,regCandidates,koCandidates]=selectCandidates(model,options)
 tol=1e-4;
 
 if not(isfolder('reduced'))
@@ -60,35 +67,36 @@ nonGeneAssocRxnID=cellfun(@isempty,reducedModel.rules);
 deleteRxns=reducedModel.rxns(nonGeneAssocRxnID);
 selectedRxns=setdiff(selectedRxns,deleteRxns);
 
-%% step3: removel of rxns related essential genes (both in vivo and in silico genes)
-essentialGenes=union(reducedModel.essentialGenes,options.expEssentialGenes);
-deleteRxns=findEssentialRxnsFromGenes(reducedModel,essentialGenes);
-selectedRxns=setdiff(selectedRxns,deleteRxns);
-
-%% step4: exclusion of centain subsystems
+%% step3: exclusion of centain subsystems
 tmpSubSystems=cellfun(@(x) strsplit(x,'/'), reducedModel.subSystems, 'UniformOutput',false);
 isSubset = cellfun(@(a)all(ismember(a,options.selSubSystems)),tmpSubSystems);
 deleteRxns = reducedModel.rxns(isSubset);
 selectedRxns=setdiff(selectedRxns,deleteRxns);
 
-%% step5: removal of transport reactions with non genes
+%% step4: removal of transport reactions with non genes
 transRxns= findTransRxns(reducedModel,true); % Remove transport reactions
 [~,transIds]=ismember(transRxns,reducedModel.rxns);
 nonGeneIds=cellfun(@isempty,reducedModel.rules(transIds));
 selectedRxns=setdiff(selectedRxns,transRxns(nonGeneIds));
 
-%% remove exchange reactions
+%% step5: remove exchange reactions
 % transRxns = findTransRxns(reducedModel,true);
 % selectedRxns=setdiff(selectedRxns,transRxns);
-% excRxns=selectedRxns(contains(selectedRxns, 'EX_'));
-% selectedRxns=setdiff(selectedRxns,excRxns);
+excRxns=selectedRxns(contains(selectedRxns, 'EX_'));
+selectedRxns=setdiff(selectedRxns,excRxns);
 
 %% step6: removal of special reactions: glycogen, thioredoxin & flavodoxin
 tmpRxns=cellfun(@(x) strsplit(x,'/'), selectedRxns, 'UniformOutput',false);
 isSubset = cellfun(@(x)all(ismember(x,options.excludedRxns)),tmpRxns);
 selectedRxns=selectedRxns(~isSubset);
 
-%% step7: removal of computationally essential reactions
+regCandidates=selectedRxns;
+%% step7: removel of rxns related essential genes (both in vivo and in silico genes)
+essentialGenes=union(reducedModel.essentialGenes,options.expEssentialGenes);
+deleteRxns=findEssentialRxnsFromGenes(reducedModel,essentialGenes);
+selectedRxns=setdiff(selectedRxns,deleteRxns);
+
+%% step8: removal of computationally essential reactions
 % fva with 5% growth rate of wild type.
 % [minflux,maxflux]= fluxVariability(reducedModel,5);
 minflux=reducedModel.mins;maxflux=reducedModel.maxs;
@@ -102,7 +110,6 @@ iscontains=cellfun(@(c)contains(c,options.targetRxn),reducedModel.rxns);
 newTargetRxn=reducedModel.rxns{iscontains};
 reducedModel=changeRxnBounds(reducedModel,{options.biomassRxn,newTargetRxn},[0 0],{'l','l'});
 
-
 %% get genes from reactions
 selectedGenes=findGenesFromRxns(reducedModel,selectedRxns);
 selectedGenes = cat(1,selectedGenes{:});
@@ -115,10 +122,10 @@ selectedGeneSets=setdiff(reducedModel.geneSets(getGeneSets),reducedModel.geneSet
 selectedGeneSets=setdiff(selectedGeneSets,reducedModel.essentialGenes);
 
 %% return selected candidates
-candidate=struct();
-candidate.rxns=selectedRxns;
-candidate.genes=selectedGenes;
-candidate.geneSets=selectedGeneSets;
+koCandidates=selectedRxns;
+
+% candidate.genes=selectedGenes;
+% candidate.geneSets=selectedGeneSets;
 end
 
 function options=blackList(model)
@@ -131,7 +138,7 @@ specialRxns=...
     'FLNDPR2r','FLDR2','FLDR','PFOR'};
 
 % Remove some reactions from allowable knockouts
-modelnames=strsplit(model.description,'-');
+modelnames=strsplit(model.description,{'_', '-'});
 switch modelnames{1}
     case {'Ecoli_core_model','e_coli_core','iAF1260','iAF1260b', 'iJO1366', 'iML1515'}
         preserveRxns=...
@@ -144,7 +151,8 @@ switch modelnames{1}
             'SUCASPtpp','SUCFUMtpp',...
             'SUCMALtpp','SUCTARTtpp'};         % thermodynamically infeasible reactions
     otherwise
-        error('model description incorrect.')
+        warning(['The GSMM ', modelnames{1}, ' has not been tested. If it is not a e coli strain, please specify reactions and subSystems that are not considered for manipulation.']);
+        preserveRxns={};
 end
 
 options=struct();

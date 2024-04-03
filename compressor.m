@@ -80,13 +80,10 @@ else
     if ~isfield(options,'minBioPecentage'), options.minBioPecentage = 5; end
 end
 
-[~,n] = size(model.S);
 biomassRxnID = findRxnIDs(model,options.biomassRxn);
 if biomassRxnID == 0, error([num2str(options.biomassRxn) ' not found.']);end
 targetRxnID = findRxnIDs(model,options.targetRxn);
 if targetRxnID == 0, error([num2str(options.targetRxn) ' not found.']);end
-oxygenRxnID = findRxnIDs(model,options.oxygenRxn);
-if oxygenRxnID == 0, error([num2str(options.oxygenRxn) ' not found.']);end
 
 reductionStatus = 1;
 
@@ -120,18 +117,24 @@ else
         disp('Flux variability anaysis')
     end
     
-    [minflux,maxflux]= fluxVariability(model,options.minBioPecentage); % minimal 5% of the wild type.
+    [minflux,maxflux]= fluxVariability(model,0, 'feasTol', 1e-9, 'optTol', 1e-9);
     fluxFVA = [minflux,maxflux];
     save(fvaFile,'fluxFVA')
 end
 WTsol=optimizeCbModel(model);
-model.mins=fluxFVA(:,1); model.maxs=fluxFVA(:,2);
-model.lb(model.mins<0 & model.mins>1e-3)=-1e-1;
-model.ub(model.maxs>0 & model.maxs<1e-3)=1e-1;
-WTfvasol=optimizeCbModel(model);
+model.mins=floor(fluxFVA(:,1)*1e6)/1e6; model.maxs=ceil(fluxFVA(:,2)*1e6)/1e6;
 
-if (abs(WTsol.f-WTfvasol.f)/WTsol.f>5e-2)
-    error('the model cannot be compressed because theoretical maximum growth is not guaranteed. Please increase flux bounds')
+model.lb=model.mins; model.ub=model.maxs;
+try
+    WTfvasol=optimizeCbModel(model);
+
+    if (abs(WTsol.f-WTfvasol.f)/WTsol.f>5e-2)
+        fprintf('the model cannot be compressed because theoretical maximum growth is not guaranteed, probability caused by large feasibility tol. %s\n',...
+            'Please increase flux bounds or reduce feasTol and/or optTol for your solver');
+    end
+catch
+    fprintf('Now to increase ')
+    model.ub(model.ub<1e-1)=1e-1; % this is important to avoid numberic (precision) issues if feasTol reaches minimum
 end
 
 %% Remove reactions which cannot carry any fluxes in the given condition
@@ -139,21 +142,14 @@ end
 if options.verbFlag == true
     disp('Remove blocked reactions from model')
 end
-removeRxnIDs = sum(abs([fluxFVA(:,1),fluxFVA(:,2)]),2)<=0;
+
+removeRxnIDs = sum(abs(fluxFVA),2)<=0;
 modelRem = removeRxns(model,model.rxns(removeRxnIDs));
 
-% Move biomassRxn, targetRxn, and oxygenRxn to first
-% minLb = min(model.lb);
-% maxUb = max(model.ub);
-% specifiedRxnIDs = find(ismember(model.lb,[0,minLb])==0 | ismember(model.ub,[0,maxUb])==0);
-% specifiedRxnIDs = [biomassRxnID;targetRxnID;oxygenRxnID;setdiff(specifiedRxnIDs,[biomassRxnID,targetRxnID,oxygenRxnID])]; % bad way
-% specifiedRxnIDs = [specifiedRxnIDs(1:3);setdiff(specifiedRxnIDs(4:end),removeRxnIDs)];
-% specifiedRxnsMat = zeros(n,length(specifiedRxnIDs));
-% for i = 1 : length(specifiedRxnIDs)
-%     specifiedRxnsMat(specifiedRxnIDs(i),i) = 1;
-% end
-% clear 
-% rxnRemoveNum
+WTfvasol=optimizeCbModel(modelRem);
+if (abs(WTsol.f-WTfvasol.f)/WTsol.f>5e-2)
+    error('the model could predict maximum growth after removing blocked reactions via FVA. Please run again with a reduced feasTol and/or optTol for your solver.');
+end
 
 nonRemovedGene = sum(modelRem.rxnGeneMat,1)>0;
 modelRem.rxnGeneMat = modelRem.rxnGeneMat(:,nonRemovedGene);
@@ -186,7 +182,7 @@ end
 % Combine linear reactions (except reactions with metabolites in biomassRxn)
 combineRest = 1;
 rxnSets = modelRem.rxns;
-preservedRxnIDs = findRxnIDs(modelRem,{options.targetRxn,options.biomassRxn,options.substrateRxn});
+preservedRxnIDs = findRxnIDs(modelRem,{options.targetRxn,options.biomassRxn});
 if ismember(0, preservedRxnIDs)
     disp('Warning: some preserved reactions do not exist in the reduced model.')
 end
