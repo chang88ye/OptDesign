@@ -45,7 +45,7 @@ The solution structure of OptDesign is:
     
     - DOWNset: set of downregulation reactions whose absolute flux decreases. Relative flux change direction is indicated by '+' (flux increase) or '-' (flux decrease) right after a reaction name in the set.
 
-4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_OptDesign. 
+4, If you want to apply OptDesign to other genome-scale models for different products, just change target product in run_OptDesign（iML1515but.m is another example to illustrate how OptDesign is used for designing butanol-producing strains）. 
 
 5, This is an optional step, however, you need to run creat_envelopes.m in the envelopes folder if you want to create production envelopes for the design strategies identified by OptDesign. It may run into errors with regard to generating LPs inconsistent with Cobratoolbox. If this is the case, you can simply turn off the model verification which induces the issue.
 
